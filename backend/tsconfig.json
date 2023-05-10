@@ -5,6 +5,9 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
+    "alwaysStrict": false,
+    "strictNullChecks": true,
+    "noImplicitAny": true,
     "skipLibCheck": true,
     "baseUrl": "./",
     "paths": {

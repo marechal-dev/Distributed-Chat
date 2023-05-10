@@ -1,0 +1,46 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "Back-End for our Distributed Chat application.",
+  "private": true,
+  "main": "server.js",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:ui": "vitest --ui",
+    "build": "tsup src --out-dir build",
+    "start:dev": "tsx watch src/server.ts",
+    "start:prod": "node build/server.js"
+  },
+  "keywords": [],
+  "author": {
+    "name": "Pietro Piva Vieira",
+    "email": "pietro.developer@gmail.com"
+  },
+  "contributors": [
+    {
+      "name": "Murilo Cabral",
+      "email": "murilocabral8@gmail.com"
+    }
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "16.0.3",
+    "fastify": "4.17.0",
+    "fastify-socket.io": "4.0.0",
+    "socket.io": "4.6.1"
+  },
+  "devDependencies": {
+    "@rocketseat/eslint-config": "1.2.0",
+    "@types/node": "20.1.2",
+    "@vitest/coverage-c8": "0.31.0",
+    "@vitest/ui": "0.31.0",
+    "eslint": "8.40.0",
+    "tsup": "6.7.0",
+    "tsx": "3.12.7",
+    "typescript": "5.0.4",
+    "vite-tsconfig-paths": "4.2.0",
+    "vitest": "0.31.0"
+  }
+}

@@ -6,6 +6,25 @@
 
 Online realtime webchat for our assignment for the Distributed Systems class.
 
+**Things to do**
+
+- [ ] Back-End
+
+  - [ ] Account Creation
+  - [ ] Authentication
+  - [ ] Authorization
+  - [ ] Global Chat
+  - [ ] Private Chat
+  - [ ] Connection/Disconnection ACK
+
+- [ ] Front-End
+  - [ ] Account Creation
+  - [ ] Login
+  - [ ] Connection to WebSocket Service
+  - [ ] Global Chat
+  - [ ] Private Chat
+  - [ ] Connection/Disconnection ACK
+
 **⚙ Techs**
 
 - Back-End

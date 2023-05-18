@@ -31,14 +31,6 @@ services:
       - cache
       - database
 
-  frontend:
-    build: ./frontend/
-    container_name: 'distributed_chat_frontend'
-    ports:
-      - '3333:3333'
-    depends_on:
-      - backend
-
 volumes:
   postgresql_data:
     driver: local

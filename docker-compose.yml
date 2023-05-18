@@ -6,15 +6,15 @@ services:
     container_name: 'distributed_chat_cache'
     restart: always
     environment:
-      - REDIS_PORT_NUMBER=6379
+      - ALLOW_EMPTY_PASSWORD=yes
     ports:
-      - '6379:6379'
+      - 6379:6379
 
   database:
     image: 'bitnami/postgresql:latest'
     container_name: 'distributed_chat_db'
     ports:
-      - '5432:5432'
+      - 5432:5432
     environment:
       - POSTGRESQL_USERNAME=docker
       - POSTGRESQL_PASSWORD=docker

@@ -1,18 +1,8 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import {
-  LoginScreenRoute,
-  RegisterScreenRoute,
-  MainScreenRoute,
-} from "./pages/Routes";
+import { ThemeProvider } from "styled-components";
+import theme from "./styles/theme";
 
-const BrowserRouter = createBrowserRouter(
-  [LoginScreenRoute, RegisterScreenRoute, MainScreenRoute],
-  {
-    basename: "/",
-  }
-);
 
 export function App() {
-  return <RouterProvider router={BrowserRouter} />;
+  return (<ThemeProvider theme={theme}></ThemeProvider>)
 }

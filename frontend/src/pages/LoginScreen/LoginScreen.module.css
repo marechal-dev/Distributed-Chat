@@ -1,0 +1,55 @@
+.wrapper {
+  height: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.innerWrapper {
+  display: grid;
+  grid-template-columns: 1fr 40rem;
+  gap: 14rem;
+
+  align-items: center;
+}
+
+.innerWrapper h1 {
+  font-weight: bold;
+  font-size: 4rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+.innerWrapper form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  background: var(--dc-600);
+
+  padding: 4rem;
+
+  max-width: 40rem;
+}
+
+.innerWrapper form h2 {
+  font-size: 2rem;
+}
+
+.inputWrapper {
+  display: flex;
+  flex-direction: column;
+
+  max-width: 21.75rem;
+}
+
+.innerWrapper form label {
+  align-self: flex-start;
+}
+
+.innerWrapper form input {
+  max-width: 23.625rem;
+}
+
+/* max-width: 63.375rem; */

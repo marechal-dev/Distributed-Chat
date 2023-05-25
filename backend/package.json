@@ -4,6 +4,9 @@
   "description": "Back-End for our Distributed Chat application.",
   "private": true,
   "main": "build/server.js",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "build": "tsup src --out-dir build",
     "start:dev": "tsx watch src/server.ts",

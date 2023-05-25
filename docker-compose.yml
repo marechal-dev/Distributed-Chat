@@ -1,15 +1,6 @@
 version: '2.17.2'
 
 services:
-  cache:
-    image: 'bitnami/redis:latest'
-    container_name: 'distributed_chat_cache'
-    restart: always
-    environment:
-      - ALLOW_EMPTY_PASSWORD=yes
-    ports:
-      - 6379:6379
-
   database:
     image: 'bitnami/postgresql:latest'
     container_name: 'distributed_chat_db'
@@ -22,14 +13,13 @@ services:
     volumes:
       - 'postgresql_data:/bitnami/postgresql'
 
-  backend:
-    build: ./backend/
-    container_name: 'distributed_chat_backend'
-    ports:
-      - '3000:3000'
-    depends_on:
-      - cache
-      - database
+  # backend:
+  #   build: ./backend/
+  #   container_name: 'distributed_chat_backend'
+  #   ports:
+  #     - '3000:3000'
+  #   depends_on:
+  #     - database
 
 volumes:
   postgresql_data:

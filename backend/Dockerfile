@@ -1,4 +1,4 @@
-FROM node
+FROM node:latest AS build
 
 WORKDIR /usr/app
 
@@ -8,8 +8,10 @@ RUN npm install
 
 COPY . .
 
-EXPOSE 3000
+EXPOSE 3333
 
 RUN npm run build
+
+FROM build
 
 CMD ["npm","run","start:prod"]

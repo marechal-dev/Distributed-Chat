@@ -1,4 +1,5 @@
 import { fastify } from 'fastify'
+import fastifyCors from '@fastify/cors'
 import fastifySocketIO from 'fastify-socket.io'
 
 import { globalHttpErrorHandler } from './globals/globalHttpErrorHandler'
@@ -9,6 +10,10 @@ const userMap = new Map<string, string>()
 const typingUsersSet = new Set<string>()
 
 export const app = fastify()
+app.register(fastifyCors, {
+  origin: '*',
+  optionsSuccessStatus: 200,
+})
 app.register(fastifySocketIO, {
   transports: ['websocket'],
 })

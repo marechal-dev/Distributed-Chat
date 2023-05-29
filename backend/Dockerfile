@@ -12,6 +12,8 @@ EXPOSE 3333
 
 RUN npm run build
 
+RUN npx prisma migrate dev
+
 FROM build
 
 CMD ["npm","run","start:prod"]

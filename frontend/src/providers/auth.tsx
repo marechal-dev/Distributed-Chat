@@ -1,6 +1,5 @@
 import axios, { AxiosResponse } from "axios";
 import { createContext, useContext, useEffect, useState } from "react";
-import  {io}  from "socket.io-client";
 
 interface UserData {
   nickname: string;

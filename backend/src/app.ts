@@ -22,16 +22,8 @@ app.register(appRoutes)
 app.setErrorHandler(globalHttpErrorHandler)
 
 app.ready().then(() => {
-  app.io.use((socket, next) => {
-    if (!userMap.has(socket.id)) {
-      userMap.set(socket.id, String(socket.handshake.query.nickname))
-    }
-
-    next()
-  })
-
   app.io.on('connection', (socket) => {
-    socket.on('global.user.typing', () => {
+    socket.on('global.user.start.typing', () => {
       const typingUserUsername = userMap.get(socket.id)
       typingUsersSet.add(socket.id)
 
@@ -48,7 +40,7 @@ app.ready().then(() => {
       app.io.emit('global.user.typing', `${typingUserUsername} está digitando`)
     })
 
-    socket.on('global.user.typing', () => {
+    socket.on('global.user.stop.typing', () => {
       typingUsersSet.delete(socket.id)
     })
 

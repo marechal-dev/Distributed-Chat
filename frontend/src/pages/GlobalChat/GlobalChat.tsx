@@ -10,12 +10,12 @@ const messageValidator = z.object({
   message: z.string(),
 });
 
-type message = z.output<typeof messageValidator>;
+type Message = z.output<typeof messageValidator>;
 
 const GlobalChat = () => {
   const socket = socketClient.connect();
   const { nickname } = useAuthContext();
-  const [messages, setMessages] = useState<message[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState<string>("");
 
   function sendMessages() {

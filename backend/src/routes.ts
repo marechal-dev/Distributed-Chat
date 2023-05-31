@@ -61,7 +61,7 @@ export async function appRoutes(app: FastifyInstance) {
     }
 
     return reply.status(200).send({
-      valid: true,
+      nickname: user.nickname,
     })
   })
 }

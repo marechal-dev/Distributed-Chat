@@ -13,16 +13,16 @@ const messageValidator = z.object({
 type message = z.output<typeof messageValidator>;
 
 const GlobalChat = () => {
-  const socket = socketClient.connect()
-  const {nickname} = useAuthContext()
-  const [messages, setMessages] = useState<message[]>([])
-  const [newMessage, setNewMessage] = useState<string>("")
-  const [isTyping, setIsTyping] = useState<string>("")
+  const socket = socketClient.connect();
+  const { nickname } = useAuthContext();
+  const [messages, setMessages] = useState<message[]>([]);
+  const [newMessage, setNewMessage] = useState<string>("");
+  const [isTyping, setIsTyping] = useState<string>("");
 
-  function sendMessages(){
-    socket.emit('global.message.new', {nickname, message: newMessage})
-    setNewMessage("")
-    socket.emit("global.user.stop.typing")
+  function sendMessages() {
+    socket.emit("global.message.new", { nickname, message: newMessage });
+    setNewMessage("");
+    socket.emit("global.user.stop.typing");
   }
 
   function handleIsTyping(e:any){
@@ -40,26 +40,30 @@ const GlobalChat = () => {
       const validatedMessage = messageValidator.parse(messages);
       setMessages((previous) => [...previous, validatedMessage]);
     }
-    function onUsersTyping(value:string){
-      setIsTyping(value)
+    function onUsersTyping(value: string) {
+      setIsTyping(value);
     }
+<<<<<<< HEAD
     function onUsersStopTyping(value:string | undefined){
       if (value){
       setIsTyping(value)}
+=======
+    function onUsersStopTyping(value: string) {
+      setIsTyping(value);
+>>>>>>> 4293e0f8fcca6d6c1328b217bfbb251e6bee78d8
     }
 
-    socket.on('global.message.new', onMessage)
-    socket.on('global.users.typing', onUsersTyping)
-    socket.on('global.user.stop.typing', onUsersStopTyping)
+    socket.on("global.message.new", onMessage);
+    socket.on("global.users.typing", onUsersTyping);
+    socket.on("global.user.stop.typing", onUsersStopTyping);
 
-    return(
-      ()=>{socket.off('global.message.new', onMessage) 
-      socket.off('global.users.typing', onUsersTyping)
-      socket.off('global.user.stop.typing', onUsersStopTyping)}
-      
-      )
-  }, [])
-  
+    return () => {
+      socket.off("global.message.new", onMessage);
+      socket.off("global.users.typing", onUsersTyping);
+      socket.off("global.user.stop.typing", onUsersStopTyping);
+    };
+  }, []);
+
   return (
     <>
       <h1>{isTyping ? isTyping : "Ninguem esta digitando"}</h1>
@@ -68,7 +72,12 @@ const GlobalChat = () => {
         label="text"
         title="Message"
         value={newMessage}
+<<<<<<< HEAD
         onChange={handleIsTyping}
+=======
+        onFocus={() => socket.emit("global.users.typing")}
+        onChange={(e) => setNewMessage(e.target.value)}
+>>>>>>> 4293e0f8fcca6d6c1328b217bfbb251e6bee78d8
       />
       <Button title="Entrar" onClick={sendMessages} />
       <ul>

@@ -23,29 +23,43 @@ app.setErrorHandler(globalHttpErrorHandler)
 
 app.ready().then(() => {
   app.io.on('connection', (socket) => {
-    socket.on('global.user.start.typing', () => {
+    socket.on('global.users.typing', () => {
       const typingUserUsername = userMap.get(socket.id)
-      typingUsersSet.add(socket.id)
 
-      if (typingUsersSet.size > 0) {
-        app.io.emit('global.user.typing', 'Muita gente está digitando...')
+      if (!typingUsersSet.has(socket.id)) {
+        typingUsersSet.add(socket.id)
+      }
+
+      if (typingUsersSet.size > 1) {
+        app.io.emit('global.users.typing', 'Muita gente está digitando...')
         return
       }
 
       if (!typingUserUsername) {
-        app.io.emit('global.user.typing', 'Um usuário está digitando...')
+        app.io.emit('global.users.typing', 'Um usuário está digitando...')
         return
       }
 
-      app.io.emit('global.user.typing', `${typingUserUsername} está digitando`)
+      app.io.emit(
+        'global.users.typing',
+        `${typingUserUsername} está digitando...`,
+      )
     })
 
     socket.on('global.user.stop.typing', () => {
       typingUsersSet.delete(socket.id)
+
+      if (typingUsersSet.size === 0) {
+        app.io.emit('global.users.typing', '')
+      }
     })
 
     socket.on('global.message.new', (payload: any) => {
       const messagePayload = newGlobalMessageSchemaValidator.parse(payload)
+
+      if (!userMap.has(socket.id)) {
+        userMap.set(socket.id, messagePayload.nickname)
+      }
 
       app.io.emit('global.message.new', messagePayload)
     })

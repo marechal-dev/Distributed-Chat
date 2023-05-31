@@ -57,6 +57,7 @@ const GlobalChat = () => {
         label="text"
         title="Message"
         value={newMessage}
+        onFocus={()=>socket.emit("global.user.start.typing")}
         onChange={(e) => setNewMessage(e.target.value)}
       />
       <Button title="Entrar" onClick={sendMessages} />

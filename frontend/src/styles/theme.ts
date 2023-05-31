@@ -1,4 +1,4 @@
-export default {
+export const theme ={
   COLORS: {
     DC_900: "#17141f",
     DC_800: "#1e1a29",
@@ -12,5 +12,7 @@ export default {
     DC_50: "#ebeaed",
 
     WHITE: "#FFF",
+
+    PURPLE: "#912CA8"
   },
 };

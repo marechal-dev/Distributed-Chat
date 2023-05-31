@@ -1,10 +1,11 @@
-import {createGlobalStyle} from "styled-components"
-import theme from './theme'
+import { createGlobalStyle} from "styled-components"
+import {theme} from "../styles/theme.ts"
 
- export default createGlobalStyle`
+
+ export default createGlobalStyle<{theme: typeof theme}>`
     :focus {
     outline: transparent;
-    box-shadow: 0 0 0 2px ${theme.COLORS.DC_400};
+    box-shadow: 0 0 0 2px ${({ theme }) => theme.COLORS.DC_400};
   }
 
     *,
@@ -19,12 +20,12 @@ import theme from './theme'
 
     html,
     body {
-      height: 100%;
+      min-height: 100vh
     }
 
     body {
-      background: ${theme.COLORS.DC_800};
-      color: ${theme.COLORS.DC_50};
+      background: ${({ theme }) => theme.COLORS.DC_800};
+      color: ${({ theme }) => theme.COLORS.WHITE};
 
       font-family: 'Roboto', sans-serif;
       font-weight: 400;
@@ -49,9 +50,13 @@ import theme from './theme'
     select {
       font: inherit;
     }
+    a {
+    text-decoration: none;
+    } 
 
     button {
       cursor: pointer;
+      border: none;
     }
 
     p,

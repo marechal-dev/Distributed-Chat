@@ -26,12 +26,9 @@ const GlobalChat = () => {
   }
 
   function handleIsTyping(e:any){
-    
     if (e.target.value){
       setNewMessage(e.target.value)
       socket.emit("global.users.typing")
-    } else{
-      socket.emit("global.user.stop.typing")
     }
   }
 
@@ -43,14 +40,9 @@ const GlobalChat = () => {
     function onUsersTyping(value: string) {
       setIsTyping(value);
     }
-<<<<<<< HEAD
     function onUsersStopTyping(value:string | undefined){
       if (value){
       setIsTyping(value)}
-=======
-    function onUsersStopTyping(value: string) {
-      setIsTyping(value);
->>>>>>> 4293e0f8fcca6d6c1328b217bfbb251e6bee78d8
     }
 
     socket.on("global.message.new", onMessage);
@@ -72,12 +64,7 @@ const GlobalChat = () => {
         label="text"
         title="Message"
         value={newMessage}
-<<<<<<< HEAD
         onChange={handleIsTyping}
-=======
-        onFocus={() => socket.emit("global.users.typing")}
-        onChange={(e) => setNewMessage(e.target.value)}
->>>>>>> 4293e0f8fcca6d6c1328b217bfbb251e6bee78d8
       />
       <Button title="Entrar" onClick={sendMessages} />
       <ul>

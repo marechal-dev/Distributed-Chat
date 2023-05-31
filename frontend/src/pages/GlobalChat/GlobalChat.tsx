@@ -47,8 +47,8 @@ const GlobalChat = () => {
       />
       <Button title="Entrar" onClick={sendMessages} />
       <ul>
-        {messages.map((message) => (
-          <li>{message.message}</li>
+        {messages.map((message, index) => (
+          <li key={index}>{message.message}</li>
         ))}
       </ul>
     </>

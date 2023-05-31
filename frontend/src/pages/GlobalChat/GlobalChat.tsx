@@ -17,10 +17,12 @@ const GlobalChat = () => {
   const {nickname} = useAuthContext()
   const [messages, setMessages] = useState<message[]>([])
   const [newMessage, setNewMessage] = useState<string>("")
+  const [isTyping, setIsTyping] = useState<string>("")
 
   function sendMessages(){
     socket.emit('global.message.new', {nickname, message: newMessage})
     setNewMessage("")
+    socket.emit("global.user.stop.typing")
   }
 
 
@@ -31,21 +33,34 @@ const GlobalChat = () => {
       const validatedMessage = messageValidator.parse(messages)
       setMessages(previous => [...previous, validatedMessage])
     }
+    function onUsersTyping(value:string){
+      setIsTyping(value)
+    }
+    function onUsersStopTyping(value:string){
+      setIsTyping(value)
+    }
 
     socket.on('global.message.new', onMessage)
+    socket.on('global.user.start.typing', onUsersTyping)
+    socket.on('global.user.stop.typing', onUsersStopTyping)
 
     return(
-      ()=>{socket.off('global.message.new', onMessage)}
+      ()=>{socket.off('global.message.new', onMessage) 
+      socket.off('global.user.start.typing', onUsersTyping)
+      socket.off('global.user.stop.typing', onUsersStopTyping)}
+      
       )
   }, [])
   
   return (
     <>
+      <h1>{isTyping}</h1>
       <Input
           type="text"
           label="text"
           title="Message"
           value={newMessage}
+          onFocus= {()=>socket.emit("global.user.start.typing")}
           onChange={(e) => setNewMessage(e.target.value)}
         />
         <Button

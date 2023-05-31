@@ -25,6 +25,16 @@ const GlobalChat = () => {
     socket.emit("global.user.stop.typing")
   }
 
+  function handleIsTyping(e:any){
+    
+    if (e.target.value){
+      setNewMessage(e.target.value)
+      socket.emit("global.users.typing")
+    } else{
+      socket.emit("global.user.stop.typing")
+    }
+  }
+
   useEffect(() => {
     function onMessage(messages: any) {
       const validatedMessage = messageValidator.parse(messages);
@@ -33,8 +43,9 @@ const GlobalChat = () => {
     function onUsersTyping(value:string){
       setIsTyping(value)
     }
-    function onUsersStopTyping(value:string){
-      setIsTyping(value)
+    function onUsersStopTyping(value:string | undefined){
+      if (value){
+      setIsTyping(value)}
     }
 
     socket.on('global.message.new', onMessage)
@@ -57,8 +68,7 @@ const GlobalChat = () => {
         label="text"
         title="Message"
         value={newMessage}
-        onFocus={()=>socket.emit("global.users.typing")}
-        onChange={(e) => setNewMessage(e.target.value)}
+        onChange={handleIsTyping}
       />
       <Button title="Entrar" onClick={sendMessages} />
       <ul>

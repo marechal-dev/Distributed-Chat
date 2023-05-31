@@ -38,12 +38,12 @@ const GlobalChat = () => {
     }
 
     socket.on('global.message.new', onMessage)
-    socket.on('global.user.start.typing', onUsersTyping)
+    socket.on('global.users.typing', onUsersTyping)
     socket.on('global.user.stop.typing', onUsersStopTyping)
 
     return(
       ()=>{socket.off('global.message.new', onMessage) 
-      socket.off('global.user.start.typing', onUsersTyping)
+      socket.off('global.users.typing', onUsersTyping)
       socket.off('global.user.stop.typing', onUsersStopTyping)}
       
       )
@@ -51,13 +51,13 @@ const GlobalChat = () => {
   
   return (
     <>
-      <h1>{isTyping}</h1>
+      <h1>{isTyping ? isTyping : "Ninguem esta digitando"}</h1>
       <Input
         type="text"
         label="text"
         title="Message"
         value={newMessage}
-        onFocus={()=>socket.emit("global.user.start.typing")}
+        onFocus={()=>socket.emit("global.users.typing")}
         onChange={(e) => setNewMessage(e.target.value)}
       />
       <Button title="Entrar" onClick={sendMessages} />

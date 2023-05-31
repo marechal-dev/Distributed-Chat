@@ -30,11 +30,11 @@ export const AuthContextProvider:React.FC<{ children: React.ReactNode }> = ({ ch
         email,
         password,
       });
-      const socket =  io("https://distributed-chat-backend.onrender.com")
 
       localStorage.setItem("nickname", data.nickname);
 
       setNickname(data.nickname);
+
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response) {

@@ -1,6 +1,5 @@
 import axios, { AxiosResponse } from "axios";
 import { createContext, useContext, useEffect, useState } from "react";
-import  {io}  from "socket.io-client";
 
 interface UserData {
   nickname: string;
@@ -17,24 +16,26 @@ interface AuthContextType {
   nickname: string;
 }
 
-
-
 export const AuthContext = createContext<AuthContextType | null>(null);
 
-export const AuthContextProvider:React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthContextProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [nickname, setNickname] = useState<string>("");
-  
+
   const handleLogin = async ({ email, password }: LoginData): Promise<void> => {
     try {
-      const { data }: AxiosResponse<UserData> = await axios.post("https://distributed-chat-backend.onrender.com/users/authenticate", {
-        email,
-        password,
-      });
+      const { data }: AxiosResponse<UserData> = await axios.post(
+        "https://distributed-chat-backend.onrender.com/users/authenticate",
+        {
+          email,
+          password,
+        }
+      );
 
       localStorage.setItem("nickname", data.nickname);
 
       setNickname(data.nickname);
-
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response) {
@@ -53,23 +54,27 @@ export const AuthContextProvider:React.FC<{ children: React.ReactNode }> = ({ ch
     localStorage.removeItem("nickname");
   };
 
-
-
   useEffect(() => {
-    const storedNickname = localStorage.getItem("nickname")
+    const storedNickname = localStorage.getItem("nickname");
     if (storedNickname) {
-      setNickname(storedNickname)
+      setNickname(storedNickname);
     }
   }, [nickname]);
 
-  return <AuthContext.Provider value={{ handleLogin, handleLogout, nickname }}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={{ handleLogin, handleLogout, nickname }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
 export const useAuthContext = (): AuthContextType => {
   const authContext = useContext(AuthContext);
 
   if (!authContext) {
-    throw new Error("useAuthContext deve ser usado dentro de um AuthContextProvider");
+    throw new Error(
+      "useAuthContext deve ser usado dentro de um AuthContextProvider"
+    );
   }
 
   return authContext;

@@ -47,7 +47,7 @@ app.ready().then(() => {
     socket.on('global.message.new', (payload: any) => {
       const messagePayload = newGlobalMessageSchemaValidator.parse(payload)
 
-      app.io.emit('message', messagePayload)
+      app.io.emit('global.message.new', messagePayload)
     })
 
     socket.on('disconnect', (_) => {

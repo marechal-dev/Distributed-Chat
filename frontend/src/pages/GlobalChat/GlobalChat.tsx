@@ -1,63 +1,58 @@
-import React, { useEffect, useState } from 'react'
-import Button from '../../components/Button'
-import { useAuthContext } from '../../providers/auth'
-import { socketClient } from '../../lib/socketClient'
-import z from 'zod'
-import Input from '../../components/Input'
+import { useEffect, useState } from "react";
+import Button from "../../components/Button";
+import { useAuthContext } from "../../providers/auth";
+import { socketClient } from "../../lib/socketClient";
+import z from "zod";
+import Input from "../../components/Input";
 
 const messageValidator = z.object({
   nickname: z.string(),
-  message: z.string()
-})
+  message: z.string(),
+});
 
-type message = z.output<typeof messageValidator>
+type message = z.output<typeof messageValidator>;
 
 const GlobalChat = () => {
-  const socket = socketClient.connect()
-  const {nickname} = useAuthContext()
-  const [messages, setMessages] = useState<message[]>([])
-  const [newMessage, setNewMessage] = useState<string>("")
+  const socket = socketClient.connect();
+  const { nickname } = useAuthContext();
+  const [messages, setMessages] = useState<message[]>([]);
+  const [newMessage, setNewMessage] = useState<string>("");
 
-  function sendMessages(){
-    socket.emit('global.message.new', {nickname, message: newMessage})
-    setNewMessage("")
+  function sendMessages() {
+    socket.emit("global.message.new", { nickname, message: newMessage });
+    setNewMessage("");
   }
 
-
-  useEffect((
-  )=>{
-
-    function onMessage(messages:any) {
-      const validatedMessage = messageValidator.parse(messages)
-      setMessages(previous => [...previous, validatedMessage])
+  useEffect(() => {
+    function onMessage(messages: any) {
+      const validatedMessage = messageValidator.parse(messages);
+      setMessages((previous) => [...previous, validatedMessage]);
     }
 
-    socket.on('global.message.new', onMessage)
+    socket.on("global.message.new", onMessage);
 
-    return(
-      ()=>{socket.off('global.message.new', onMessage)}
-      )
-  }, [])
-  
+    return () => {
+      socket.off("global.message.new", onMessage);
+    };
+  }, []);
+
   return (
     <>
       <Input
-          type="text"
-          label="text"
-          title="Message"
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-        />
-        <Button
-          title="Entrar"
-          onClick={sendMessages}
+        type="text"
+        label="text"
+        title="Message"
+        value={newMessage}
+        onChange={(e) => setNewMessage(e.target.value)}
+      />
+      <Button title="Entrar" onClick={sendMessages} />
+      <ul>
+        {messages.map((message) => (
+          <li>{message.message}</li>
+        ))}
+      </ul>
+    </>
+  );
+};
 
-        />
-        <ul>
-          {messages.map((message)=>(<li>{message.message}</li>))}
-        </ul>
-      </>
-  )
-}
-
-export default GlobalChat
+export default GlobalChat;

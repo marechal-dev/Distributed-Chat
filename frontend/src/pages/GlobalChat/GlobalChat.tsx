@@ -54,7 +54,7 @@ const GlobalChat = () => {
 
         />
         <ul>
-          {messages.map((message)=>(<li>{message.message}</li>))}
+          {messages.map((message, index)=>(<li key ={index}>{message.message}</li>))}
         </ul>
       </>
   )

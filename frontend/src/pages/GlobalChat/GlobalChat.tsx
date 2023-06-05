@@ -1,9 +1,12 @@
-import { useEffect, useState } from "react";
-import Button from "../../components/Button";
+import { useEffect, useRef, useState } from "react";
 import { useAuthContext } from "../../providers/auth";
 import { socketClient } from "../../lib/socketClient";
 import z from "zod";
-import Input from "../../components/Input";
+import { Chat, Container, Footer, Header, Logo, Main} from "./styles";
+
+import Messages from "../../components/Messages";
+import {FiChevronLeft, FiGlobe} from "react-icons/fi"
+import {GoRocket} from "react-icons/go"
 
 const messageValidator = z.object({
   nickname: z.string(),
@@ -18,11 +21,22 @@ const GlobalChat = () => {
   const [messages, setMessages] = useState<message[]>([]);
   const [newMessage, setNewMessage] = useState<string>("");
   const [isTyping, setIsTyping] = useState<string>("");
+  const conversationRef = useRef<HTMLDivElement>(null);
+  
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      sendMessages()
+    }
+  };
 
   function sendMessages() {
-    socket.emit("global.message.new", { nickname, message: newMessage });
-    setNewMessage("");
-    socket.emit("global.user.stop.typing");
+    if(newMessage){
+      socket.emit("global.message.new", { nickname, message: newMessage });
+      setNewMessage("");
+    }
+    console.log("ruim")
   }
 
   function handleIsTyping(e:any){
@@ -33,6 +47,10 @@ const GlobalChat = () => {
   }
 
   useEffect(() => {
+    if (conversationRef.current) {
+      conversationRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }
+
     function onMessage(messages: any) {
       const validatedMessage = messageValidator.parse(messages);
       setMessages((previous) => [...previous, validatedMessage]);
@@ -54,25 +72,36 @@ const GlobalChat = () => {
       socket.off("global.users.typing", onUsersTyping);
       socket.off("global.user.stop.typing", onUsersStopTyping);
     };
-  }, []);
+  }, [messages]);
 
   return (
-    <>
-      <h1>{isTyping ? isTyping : "Ninguem esta digitando"}</h1>
-      <Input
-        type="text"
-        label="text"
-        title="Message"
-        value={newMessage}
-        onChange={handleIsTyping}
-      />
-      <Button title="Entrar" onClick={sendMessages} />
-      <ul>
-        {messages.map((message, index) => (
-          <li key={index}>{message.message}</li>
-        ))}
-      </ul>
-    </>
+    <Container >
+      <Chat >
+        <Header>
+          <div id="buttonBack">
+              <FiChevronLeft color="white"/>
+          </div>
+          <Logo>
+              <FiGlobe color="white"/>
+          </Logo>
+        </Header>
+        <Main ref={conversationRef}>
+          { 
+            messages.map((message, index)=>
+              <Messages key={index} name={message.nickname} message={message.message} isMine={true}/>
+            )
+           }
+        </Main>
+        <Footer>
+          <input 
+          type="text"
+          value={newMessage}
+          onChange={(e) => setNewMessage(e.target.value)}
+          onKeyDown={handleKeyDown}/>
+          <button onClick={sendMessages}><GoRocket/></button>
+        </Footer>
+      </Chat>
+    </Container>
   );
 };
 

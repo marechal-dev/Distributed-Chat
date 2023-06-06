@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useAuthContext } from "../../providers/auth";
 import { socketClient } from "../../lib/socketClient";
-import z from "zod";
+import z, { set } from "zod";
 import { Chat, Container, Footer, Header, Logo, Main} from "./styles";
 
 import Messages from "../../components/Messages";
@@ -20,9 +20,9 @@ const GlobalChat = () => {
   const { nickname } = useAuthContext();
   const [messages, setMessages] = useState<message[]>([]);
   const [newMessage, setNewMessage] = useState<string>("");
-  const [isTyping, setIsTyping] = useState<string>("");
   const conversationRef = useRef<HTMLDivElement>(null);
   
+
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
@@ -36,14 +36,6 @@ const GlobalChat = () => {
       socket.emit("global.message.new", { nickname, message: newMessage });
       setNewMessage("");
     }
-    console.log("ruim")
-  }
-
-  function handleIsTyping(e:any){
-    if (e.target.value){
-      setNewMessage(e.target.value)
-      socket.emit("global.users.typing")
-    }
   }
 
   useEffect(() => {
@@ -55,22 +47,11 @@ const GlobalChat = () => {
       const validatedMessage = messageValidator.parse(messages);
       setMessages((previous) => [...previous, validatedMessage]);
     }
-    function onUsersTyping(value: string) {
-      setIsTyping(value);
-    }
-    function onUsersStopTyping(value:string | undefined){
-      if (value){
-      setIsTyping(value)}
-    }
 
     socket.on("global.message.new", onMessage);
-    socket.on("global.users.typing", onUsersTyping);
-    socket.on("global.user.stop.typing", onUsersStopTyping);
 
     return () => {
       socket.off("global.message.new", onMessage);
-      socket.off("global.users.typing", onUsersTyping);
-      socket.off("global.user.stop.typing", onUsersStopTyping);
     };
   }, [messages]);
 
@@ -87,9 +68,10 @@ const GlobalChat = () => {
         </Header>
         <Main ref={conversationRef}>
           { 
-            messages.map((message, index)=>
-              <Messages key={index} name={message.nickname} message={message.message} isMine={true}/>
-            )
+            messages.map((message, index)=>{
+              return(
+              <Messages key={index} name={message.nickname} message={message.message} isMine={message.nickname === nickname}/>
+            )})
            }
         </Main>
         <Footer>

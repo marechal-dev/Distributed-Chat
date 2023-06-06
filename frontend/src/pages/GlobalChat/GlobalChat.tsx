@@ -20,9 +20,8 @@ const GlobalChat = () => {
   const { nickname } = useAuthContext();
   const [messages, setMessages] = useState<message[]>([]);
   const [newMessage, setNewMessage] = useState<string>("");
-  const [, setIsTyping] = useState<string>("");
+  // const [, setIsTyping] = useState<string>("");
   const conversationRef = useRef<HTMLDivElement>(null);
-
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
@@ -57,14 +56,14 @@ const GlobalChat = () => {
       const validatedMessage = messageValidator.parse(messages);
       setMessages((previous) => [...previous, validatedMessage]);
     }
-    function onUsersTyping(value: string) {
-      setIsTyping(value);
-    }
-    function onUsersStopTyping(value: string | undefined) {
-      if (value) {
-        setIsTyping(value);
-      }
-    }
+    // function onUsersTyping(value: string) {
+    //   setIsTyping(value);
+    // }
+    // function onUsersStopTyping(value: string | undefined) {
+    //   if (value) {
+    //     setIsTyping(value);
+    //   }
+    // }
 
     socket.on("global.message.new", onMessage);
 

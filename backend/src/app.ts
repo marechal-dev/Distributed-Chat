@@ -67,6 +67,7 @@ app.ready().then(() => {
     socket.on('disconnect', (_) => {
       const disconnectedUserUsername = userMap.get(socket.id)
       userMap.delete(socket.id)
+      typingUsersSet.delete(socket.id)
 
       if (!disconnectedUserUsername) {
         app.io.emit('global.disconnection', 'Um usuário se desconectou')

@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { useAuthContext } from "../../providers/auth";
 import { socketClient } from "../../lib/socketClient";
-import z, { set } from "zod";
-import { Chat, Container, Footer, Header, Logo, Main} from "./styles";
+import z from "zod";
+import { Chat, Container, Footer, Header, Logo, Main } from "./styles";
 
 import Messages from "../../components/Messages";
-import {FiChevronLeft, FiGlobe} from "react-icons/fi"
-import {GoRocket} from "react-icons/go"
+import { FiChevronLeft, FiGlobe } from "react-icons/fi";
+import { GoRocket } from "react-icons/go";
 
 const messageValidator = z.object({
   nickname: z.string(),
@@ -20,32 +20,50 @@ const GlobalChat = () => {
   const { nickname } = useAuthContext();
   const [messages, setMessages] = useState<message[]>([]);
   const [newMessage, setNewMessage] = useState<string>("");
+  const [, setIsTyping] = useState<string>("");
   const conversationRef = useRef<HTMLDivElement>(null);
-  
 
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       event.preventDefault();
-      sendMessages()
+      sendMessages();
     }
   };
 
   function sendMessages() {
-    if(newMessage){
+    if (newMessage) {
       socket.emit("global.message.new", { nickname, message: newMessage });
       setNewMessage("");
     }
   }
 
+  // function handleIsTyping(e:any){
+  //   if (e.target.value){
+  //     setNewMessage(e.target.value)
+  //     socket.emit("global.users.typing")
+  //   }
+  // }
+
   useEffect(() => {
     if (conversationRef.current) {
-      conversationRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      conversationRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+      });
     }
 
     function onMessage(messages: any) {
       const validatedMessage = messageValidator.parse(messages);
       setMessages((previous) => [...previous, validatedMessage]);
+    }
+    function onUsersTyping(value: string) {
+      setIsTyping(value);
+    }
+    function onUsersStopTyping(value: string | undefined) {
+      if (value) {
+        setIsTyping(value);
+      }
     }
 
     socket.on("global.message.new", onMessage);
@@ -56,31 +74,36 @@ const GlobalChat = () => {
   }, [messages]);
 
   return (
-    <Container >
-      <Chat >
+    <Container>
+      <Chat>
         <Header>
           <div id="buttonBack">
-              <FiChevronLeft color="white"/>
+            <FiChevronLeft color="white" />
           </div>
           <Logo>
-              <FiGlobe color="white"/>
+            <FiGlobe color="white" />
           </Logo>
         </Header>
         <Main ref={conversationRef}>
-          { 
-            messages.map((message, index)=>{
-              return(
-              <Messages key={index} name={message.nickname} message={message.message} isMine={message.nickname === nickname}/>
-            )})
-           }
+          {messages.map((message, index) => (
+            <Messages
+              key={index}
+              name={message.nickname}
+              message={message.message}
+              isMine={message.nickname === nickname}
+            />
+          ))}
         </Main>
         <Footer>
-          <input 
-          type="text"
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          onKeyDown={handleKeyDown}/>
-          <button onClick={sendMessages}><GoRocket/></button>
+          <input
+            type="text"
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            onKeyDown={handleKeyDown}
+          />
+          <button onClick={sendMessages}>
+            <GoRocket />
+          </button>
         </Footer>
       </Chat>
     </Container>

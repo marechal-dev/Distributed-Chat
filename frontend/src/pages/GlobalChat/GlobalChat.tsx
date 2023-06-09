@@ -1,24 +1,25 @@
 import { useEffect, useRef, useState } from "react";
-import { useAuthContext } from "../../providers/auth";
-import { socketClient } from "../../lib/socketClient";
 import z from "zod";
-import { Chat, Container, Footer, Header, Logo, Main } from "./styles";
-
-import Messages from "../../components/Messages";
 import { FiChevronLeft, FiGlobe } from "react-icons/fi";
 import { GoRocket } from "react-icons/go";
+
+import { socketClient } from "../../lib/socketClient";
+import { useAuthContext } from "../../providers/auth";
+import Messages from "../../components/Messages";
+
+import { Chat, Container, Footer, Header, Logo, Main } from "./styles";
 
 const messageValidator = z.object({
   nickname: z.string(),
   message: z.string(),
 });
 
-type message = z.output<typeof messageValidator>;
+type Message = z.output<typeof messageValidator>;
 
 const GlobalChat = () => {
   const socket = socketClient.connect();
   const { nickname } = useAuthContext();
-  const [messages, setMessages] = useState<message[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState<string>("");
   // const [, setIsTyping] = useState<string>("");
   const conversationRef = useRef<HTMLDivElement>(null);

@@ -1,26 +1,27 @@
-version: '2.17.2'
+version: '3'
+
+volumes:
+  postgresql_data:
+    driver: local
 
 services:
   database:
     image: 'bitnami/postgresql:latest'
-    container_name: 'distributed_chat_db'
+    container_name: "database"
+    restart: always
     ports:
       - 5432:5432
     environment:
       - POSTGRESQL_USERNAME=docker
       - POSTGRESQL_PASSWORD=docker
-      - POSTGRESQL_DATABASE=app
+      - POSTGRESQL_DATABASE=distributed_chat
     volumes:
       - 'postgresql_data:/bitnami/postgresql'
-
+    
   backend:
     build: ./backend/
-    container_name: 'distributed_chat_backend'
+    container_name: 'backend'
     ports:
-      - '3000:3000'
+      - 3333:3333
     depends_on:
       - database
-
-volumes:
-  postgresql_data:
-    driver: local

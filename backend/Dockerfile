@@ -1,4 +1,4 @@
-FROM node:latest AS build
+FROM node:lts-alpine AS build
 
 WORKDIR /usr/app
 
@@ -12,8 +12,8 @@ EXPOSE 3333
 
 RUN npm run build
 
-RUN npx prisma migrate dev
-
 FROM build
+
+RUN npx prisma migrate dev
 
 CMD ["npm","run","start:prod"]

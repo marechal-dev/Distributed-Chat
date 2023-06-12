@@ -1,13 +1,20 @@
-version: '3'
+version: '3.8'
 
 volumes:
   postgresql_data:
     driver: local
 
+networks:
+  app-tier:
+    driver: bridge
+
 services:
   database:
     image: 'bitnami/postgresql:latest'
     restart: always
+    container_name: database
+    networks:
+      - app-tier
     ports:
       - 5432:5432
     environment:
@@ -18,8 +25,43 @@ services:
       - 'postgresql_data:/bitnami/postgresql'
     
   backend:
-    build: ./backend/
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: backend
+    networks:
+      - app-tier
     ports:
       - 3333:3333
     depends_on:
       - database
+  
+  backend_replica:
+    build:
+      context: ./backend
+      dockerfile: replica.Dockerfile
+    container_name: "backend_replica"
+    environment:
+      - PORT=3334
+    networks:
+      - app-tier
+    ports:
+      - 3334:3334
+    depends_on:
+      - database
+  
+  # proxy:
+  #   build: ./proxy/
+  #   container_name: proxy
+  #   ports:
+  #     - 4242:4242
+  #   volumes:
+  #     - ./nginx:/etc/nginx/conf.d
+  #     - "/etc/timezone:/etc/timezone:ro"
+  #     - "/etc/localtime:/etc/localtime:ro"
+  #     - ./public:/usr/share/nginx/html:ro
+  #   networks:
+  #     - app-tier
+  #   depends_on:
+  #     - backend
+  #     - backend_replica

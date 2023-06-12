@@ -5,11 +5,13 @@
   "private": true,
   "main": "build/server.js",
   "engines": {
-    "node": ">=18"
+    "node": ">=18 <19"
   },
   "scripts": {
     "build": "tsup src --out-dir build",
+    "prestart:dev": "prisma migrate dev",
     "start:dev": "tsx watch src/server.ts",
+    "prestart:prod": "prisma migrate deploy",
     "start:prod": "node build/server.js"
   },
   "keywords": [],

@@ -20,9 +20,9 @@ Online realtime webchat for our assignment for the Distributed Systems class.
   - [X] Login
   - [X] Connection to WebSocket Service
   - [X] Global Chat
-  - [ ] OLHA A MENSAGEM
   - [ ] Connection/Disconnection ACK
-  - [ ] Disconnection Handling (redirect to Back-End Replica)
+  - [ ] Disconnection Handling (connect to Back-End Replica)
+  - [ ] OLHA A MENSAGEM
 
 ## ⚙ Techs
 

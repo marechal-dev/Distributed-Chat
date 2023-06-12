@@ -6,7 +6,7 @@
 
 Online realtime webchat for our assignment for the Distributed Systems class.
 
-## Things to do
+## 🛠 Things to do
 
 - [X] Back-End
   - [X] Account Creation

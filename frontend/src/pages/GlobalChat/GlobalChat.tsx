@@ -71,7 +71,6 @@ const GlobalChat = () => {
     }
 
     const onConnectionError = () => {
-      socketClient.disconnect();
       setUsingFallbackServer(true);
     };
 

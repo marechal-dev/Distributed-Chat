@@ -16,9 +16,10 @@ const messageValidator = z.object({
 
 type Message = z.output<typeof messageValidator>;
 
+const socket = socketClient.connect();
+const redundantSocket = redundantSocketClient.connect();
+
 const GlobalChat = () => {
-  const socket = socketClient.connect();
-  const redundantSocket = redundantSocketClient.connect();
   const { nickname } = useAuthContext();
   const [usingFallbackServer, setUsingFallbackServer] =
     useState<boolean>(false);

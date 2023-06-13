@@ -20,6 +20,8 @@ const GlobalChat = () => {
   const socket = socketClient.connect();
   const redundantSocket = redundantSocketClient.connect();
   const { nickname } = useAuthContext();
+  const [usingFallbackServer, setUsingFallbackServer] =
+    useState<boolean>(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState<string>("");
   // const [, setIsTyping] = useState<string>("");
@@ -34,10 +36,20 @@ const GlobalChat = () => {
 
   const onConnectionError = () => {
     socket.close();
+    setUsingFallbackServer(true);
   };
 
   function sendMessages() {
     if (newMessage) {
+      if (usingFallbackServer) {
+        redundantSocket.emit("global.message.new", {
+          nickname,
+          message: newMessage,
+        });
+        setNewMessage("");
+        return;
+      }
+
       socket.emit("global.message.new", { nickname, message: newMessage });
       setNewMessage("");
     }

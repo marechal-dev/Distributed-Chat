@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import z from "zod";
 import { FiChevronLeft, FiGlobe } from "react-icons/fi";
 import { GoRocket } from "react-icons/go";
@@ -9,61 +9,52 @@ import Messages from "../../components/Messages";
 
 import { Chat, Container, Footer, Header, Logo, Main } from "./styles";
 
-const messageValidator = z.object({
+const incomingMessageSchemaValidator = z.object({
   nickname: z.string(),
   message: z.string(),
 });
 
-type Message = z.output<typeof messageValidator>;
-
-const socket = socketClient.connect();
-const redundantSocket = redundantSocketClient.connect();
+type Message = z.output<typeof incomingMessageSchemaValidator>;
 
 const GlobalChat = () => {
   const { nickname } = useAuthContext();
+
   const [usingFallbackServer, setUsingFallbackServer] =
     useState<boolean>(false);
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [newMessage, setNewMessage] = useState<string>("");
-  // const [, setIsTyping] = useState<string>("");
+
+  const [receivedMessages, setReceivedMessages] = useState<Message[]>([]);
+  const [message, setMessage] = useState<string>("");
+
   const conversationRef = useRef<HTMLDivElement>(null);
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      sendMessages();
-    }
-  };
-
-  const onConnectionError = () => {
-    socket.close();
-    setUsingFallbackServer(true);
-  };
-
-  function sendMessages() {
-    if (newMessage) {
+  const handleSendMessage = () => {
+    if (message) {
       if (usingFallbackServer) {
-        redundantSocket.emit("global.message.new", {
+        redundantSocketClient.emit("global.message.new", {
           nickname,
-          message: newMessage,
+          message: message,
         });
-        setNewMessage("");
+        setMessage("");
         return;
       }
 
-      socket.emit("global.message.new", { nickname, message: newMessage });
-      setNewMessage("");
+      socketClient.emit("global.message.new", { nickname, message: message });
+      setMessage("");
     }
-  }
+  };
 
-  // function handleIsTyping(e:any){
-  //   if (e.target.value){
-  //     setNewMessage(e.target.value)
-  //     socket.emit("global.users.typing")
-  //   }
-  // }
+  const onPressEnterKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    e.preventDefault();
+
+    if (e.key === "Enter") {
+      handleSendMessage();
+    }
+  };
 
   useEffect(() => {
+    socketClient.connect();
+    redundantSocketClient.connect();
+
     if (conversationRef.current) {
       conversationRef.current.scrollIntoView({
         behavior: "smooth",
@@ -71,29 +62,26 @@ const GlobalChat = () => {
       });
     }
 
-    function onMessage(messages: any) {
-      const validatedMessage = messageValidator.parse(messages);
-      setMessages((previous) => [...previous, validatedMessage]);
+    function onReceiveNewMessage(messages: unknown) {
+      const validatedMessage = incomingMessageSchemaValidator.parse(messages);
+      setReceivedMessages((previous) => [...previous, validatedMessage]);
     }
-    // function onUsersTyping(value: string) {
-    //   setIsTyping(value);
-    // }
-    // function onUsersStopTyping(value: string | undefined) {
-    //   if (value) {
-    //     setIsTyping(value);
-    //   }
-    // }
 
-    socket.on("connect_error", onConnectionError);
-    socket.on("global.message.new", onMessage);
-    redundantSocket.on("global.message.new", onMessage);
+    const onConnectionError = () => {
+      socketClient.close();
+      setUsingFallbackServer(true);
+    };
+
+    socketClient.on("connect_error", onConnectionError);
+    socketClient.on("global.message.new", onReceiveNewMessage);
+    redundantSocketClient.on("global.message.new", onReceiveNewMessage);
 
     return () => {
-      socket.off("connect_error", onConnectionError);
-      socket.off("global.message.new", onMessage);
-      redundantSocket.off("global.message.new", onMessage);
+      socketClient.off("connect_error", onConnectionError);
+      socketClient.off("global.message.new", onReceiveNewMessage);
+      redundantSocketClient.off("global.message.new", onReceiveNewMessage);
     };
-  }, [messages]);
+  }, [receivedMessages]);
 
   return (
     <Container>
@@ -107,7 +95,7 @@ const GlobalChat = () => {
           </Logo>
         </Header>
         <Main ref={conversationRef}>
-          {messages.map((message, index) => (
+          {receivedMessages.map((message, index) => (
             <Messages
               key={index}
               name={message.nickname}
@@ -119,11 +107,11 @@ const GlobalChat = () => {
         <Footer>
           <input
             type="text"
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            onKeyDown={handleKeyDown}
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            onKeyDown={onPressEnterKey}
           />
-          <button onClick={sendMessages}>
+          <button onClick={handleSendMessage}>
             <GoRocket />
           </button>
         </Footer>

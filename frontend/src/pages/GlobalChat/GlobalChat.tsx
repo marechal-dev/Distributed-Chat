@@ -3,7 +3,7 @@ import z from "zod";
 import { FiChevronLeft, FiGlobe } from "react-icons/fi";
 import { GoRocket } from "react-icons/go";
 
-import { socketClient } from "../../lib/socketClient";
+import { socketClient, redundantSocketClient } from "../../lib/socketClients";
 import { useAuthContext } from "../../providers/auth";
 import Messages from "../../components/Messages";
 
@@ -18,6 +18,7 @@ type Message = z.output<typeof messageValidator>;
 
 const GlobalChat = () => {
   const socket = socketClient.connect();
+  const redundantSocket = redundantSocketClient.connect();
   const { nickname } = useAuthContext();
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState<string>("");
@@ -67,9 +68,11 @@ const GlobalChat = () => {
     // }
 
     socket.on("global.message.new", onMessage);
+    redundantSocket.on("global.message.new", onMessage);
 
     return () => {
       socket.off("global.message.new", onMessage);
+      redundantSocket.off("global.message.new", onMessage);
     };
   }, [messages]);
 

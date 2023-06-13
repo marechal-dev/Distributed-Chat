@@ -32,6 +32,10 @@ const GlobalChat = () => {
     }
   };
 
+  const onConnectionError = () => {
+    socket.close();
+  };
+
   function sendMessages() {
     if (newMessage) {
       socket.emit("global.message.new", { nickname, message: newMessage });
@@ -67,10 +71,12 @@ const GlobalChat = () => {
     //   }
     // }
 
+    socket.on("connect_error", onConnectionError);
     socket.on("global.message.new", onMessage);
     redundantSocket.on("global.message.new", onMessage);
 
     return () => {
+      socket.off("connect_error", onConnectionError);
       socket.off("global.message.new", onMessage);
       redundantSocket.off("global.message.new", onMessage);
     };

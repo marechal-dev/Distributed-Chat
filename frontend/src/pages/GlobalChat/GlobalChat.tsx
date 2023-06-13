@@ -22,8 +22,8 @@ const GlobalChat = () => {
   const [usingFallbackServer, setUsingFallbackServer] =
     useState<boolean>(false);
 
-  const [receivedMessages, setReceivedMessages] = useState<Message[]>([]);
   const [message, setMessage] = useState<string>("");
+  const [receivedMessages, setReceivedMessages] = useState<Message[]>([]);
 
   const conversationRef = useRef<HTMLDivElement>(null);
 
@@ -55,6 +55,13 @@ const GlobalChat = () => {
     socketClient.connect();
     redundantSocketClient.connect();
 
+    return () => {
+      socketClient.disconnect();
+      redundantSocketClient.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
     if (conversationRef.current) {
       conversationRef.current.scrollIntoView({
         behavior: "smooth",
@@ -62,13 +69,13 @@ const GlobalChat = () => {
       });
     }
 
-    function onReceiveNewMessage(messages: unknown) {
+    const onReceiveNewMessage = (messages: unknown) => {
       const validatedMessage = incomingMessageSchemaValidator.parse(messages);
       setReceivedMessages((previous) => [...previous, validatedMessage]);
-    }
+    };
 
     const onConnectionError = () => {
-      socketClient.close();
+      socketClient.disconnect();
       setUsingFallbackServer(true);
     };
 

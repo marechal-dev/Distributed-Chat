@@ -44,9 +44,8 @@ const GlobalChat = () => {
   };
 
   const onPressEnterKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    e.preventDefault();
-
     if (e.key === "Enter") {
+      e.preventDefault();
       handleSendMessage();
     }
   };
@@ -55,8 +54,19 @@ const GlobalChat = () => {
     socketClient.connect();
     redundantSocketClient.connect();
 
-    return () => {
+    const onConnectionError = () => {
       socketClient.disconnect();
+      setUsingFallbackServer(true);
+    };
+
+    socketClient.on("connect_error", onConnectionError);
+
+    return () => {
+      socketClient.off("connect_error", onConnectionError);
+
+      if (!socketClient.disconnected) {
+        socketClient.disconnect();
+      }
       redundantSocketClient.disconnect();
     };
   }, []);
@@ -74,17 +84,10 @@ const GlobalChat = () => {
       setReceivedMessages((previous) => [...previous, validatedMessage]);
     };
 
-    const onConnectionError = () => {
-      socketClient.disconnect();
-      setUsingFallbackServer(true);
-    };
-
-    socketClient.on("connect_error", onConnectionError);
     socketClient.on("global.message.new", onReceiveNewMessage);
     redundantSocketClient.on("global.message.new", onReceiveNewMessage);
 
     return () => {
-      socketClient.off("connect_error", onConnectionError);
       socketClient.off("global.message.new", onReceiveNewMessage);
       redundantSocketClient.off("global.message.new", onReceiveNewMessage);
     };

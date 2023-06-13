@@ -26,7 +26,7 @@ export const AuthContextProvider: React.FC<{ children: React.ReactNode }> = ({
   const handleLogin = async ({ email, password }: LoginData): Promise<void> => {
     try {
       const { data }: AxiosResponse<UserData> = await axios.post(
-        "http://localhost:4242/users/authenticate",
+        "https://distributed-chat-backend.onrender.com/users/authenticate",
         {
           email,
           password,

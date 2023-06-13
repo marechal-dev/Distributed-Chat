@@ -27,7 +27,10 @@ const Register = () => {
 
     const payload = { nickname, email, password };
     axios
-      .post("http://localhost:4242/users/create", payload)
+      .post(
+        "https://distributed-chat-backend.onrender.com/users/create",
+        payload
+      )
       .then(() => {
         alert("Usuario cadastrado");
       })

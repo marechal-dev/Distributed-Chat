@@ -71,6 +71,11 @@ const GlobalChat = () => {
     }
 
     const onConnectionError = () => {
+      socketClient.close();
+      setUsingFallbackServer(true);
+    };
+
+    const onDisconnect = () => {
       setUsingFallbackServer(true);
     };
 
@@ -80,11 +85,13 @@ const GlobalChat = () => {
     };
 
     socketClient.on("connect_error", onConnectionError);
+    socketClient.on("disconnect", onDisconnect);
     socketClient.on("global.message.new", onReceiveNewMessage);
     redundantSocketClient.on("global.message.new", onReceiveNewMessage);
 
     return () => {
       socketClient.off("connect_error", onConnectionError);
+      socketClient.off("disconnect", onDisconnect);
       socketClient.off("global.message.new", onReceiveNewMessage);
       redundantSocketClient.off("global.message.new", onReceiveNewMessage);
     };

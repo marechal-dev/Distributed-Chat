@@ -15,14 +15,12 @@ Online realtime webchat for our assignment for the Distributed Systems class.
   - [X] Global Chat
   - [X] Connection/Disconnection ACK
   - [X] Replicated Server
-- [ ] Front-End
+- [X] Front-End
   - [X] Account Creation
   - [X] Login
   - [X] Connection to WebSocket Service
   - [X] Global Chat
-  - [ ] Connection/Disconnection ACK
-  - [ ] Disconnection Handling (connect to Back-End Replica)
-  - [ ] OLHA A MENSAGEM
+  - [X] Disconnection Handling (connect to Back-End Replica)
 
 ## ⚙ Techs
 

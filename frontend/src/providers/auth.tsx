@@ -1,5 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import { createContext, useContext, useEffect, useState } from "react";
+import { env } from "../configs/env";
 
 interface UserData {
   nickname: string;
@@ -26,7 +27,7 @@ export const AuthContextProvider: React.FC<{ children: React.ReactNode }> = ({
   const handleLogin = async ({ email, password }: LoginData): Promise<void> => {
     try {
       const { data }: AxiosResponse<UserData> = await axios.post(
-        "https://distributed-chat-backend.onrender.com/users/authenticate",
+        `${env.VITE_AUTH_SERVER_URL}/users/authenticate`,
         {
           email,
           password,

@@ -4,6 +4,7 @@ import Button from "../../components/Button";
 import axios from "axios";
 import Input from "../../components/Input";
 import { Link } from "react-router-dom";
+import { env } from "../../configs/env";
 
 interface iRegisterProps {
   nickname: string;
@@ -27,10 +28,7 @@ const Register = () => {
 
     const payload = { nickname, email, password };
     axios
-      .post(
-        "https://distributed-chat-backend.onrender.com/users/create",
-        payload
-      )
+      .post(`${env.VITE_AUTH_SERVER_URL}/users/create`, payload)
       .then(() => {
         alert("Usuario cadastrado");
       })

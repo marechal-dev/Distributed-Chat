@@ -1,7 +1,8 @@
 import { io } from "socket.io-client";
+import { env } from "../configs/env";
 
 export const socketClient = io(
-  "https://distributed-chat-backend.onrender.com",
+  env.VITE_MAIN_SERVER_URL,
   {
     autoConnect: false,
     reconnection: false,
@@ -10,7 +11,7 @@ export const socketClient = io(
 );
 
 export const redundantSocketClient = io(
-  "https://distributed-chat-fallback-backend.onrender.com",
+  env.VITE_REPLICA_SERVER_URL,
   {
     autoConnect: false,
     transports: ["websocket"],

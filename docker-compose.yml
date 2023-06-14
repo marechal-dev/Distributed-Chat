@@ -23,6 +23,20 @@ services:
       - POSTGRESQL_DATABASE=distributed_chat
     volumes:
       - 'postgresql_data:/bitnami/postgresql'
+  
+  auth:
+    build:
+      context: ./backend
+      dockerfile: auth.Dockerfile
+    container_name: auth
+    environment:
+      - PORT=3332
+    networks:
+      - app-tier
+    ports:
+      - 3332:3332
+    depends_on:
+      - database
     
   backend:
     build:
@@ -49,19 +63,3 @@ services:
       - 3334:3334
     depends_on:
       - database
-  
-  # proxy:
-  #   build: ./proxy/
-  #   container_name: proxy
-  #   ports:
-  #     - 4242:4242
-  #   volumes:
-  #     - ./nginx:/etc/nginx/conf.d
-  #     - "/etc/timezone:/etc/timezone:ro"
-  #     - "/etc/localtime:/etc/localtime:ro"
-  #     - ./public:/usr/share/nginx/html:ro
-  #   networks:
-  #     - app-tier
-  #   depends_on:
-  #     - backend
-  #     - backend_replica
